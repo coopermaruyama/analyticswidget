@@ -89,16 +89,16 @@ class tantan_GoogleAnalytics {
         /*
             PARSE LOGIN FORM
         */
-        
-        $loginForm = "https://www.google.com/accounts/ServiceLoginBox?service=analytics&nui=1&hl=en-US&continue=http://www.google.com/analytics/home/%3Fet%3Dreset%26hl%3Den-US";
+
+        $loginForm = "https://www.google.com/accounts/ServiceLogin?service=analytics&passive=true&nui=1&hl=en&continue=https://www.google.com/analytics/settings/&followup=https://www.google.com/analytics/settings/";
         $this->req->setMethod('GET');
         $this->req->setURL($loginForm);
         $this->req->sendRequest();
         $cookies = $this->req->getResponseCookies();
         $response = $this->req->getResponseBody();
 
-        if (!ereg('Google Accounts', $response)) {
-            $this->setError('Unable to establish a connection to Google Analytics. Make sure your server has the proper <a href="http://us2.php.net/manual/en/ref.curl.php">libcurl</a> libraries (with OpenSSL support) for PHP installed.');
+        if (!ereg('Google Analytics', $response)) {
+            $this->setError('Unable to establish a connection to Google Analytics.');
             return false;
         }
         $hidden['GA3T'] = $cookies['GA3T']['value'];
@@ -108,10 +108,10 @@ class tantan_GoogleAnalytics {
         /*
             PERFORM THE LOGIN ACTION
         */
-        $loginAction = "https://www.google.com/accounts/ServiceLoginBoxAuth";
+        $loginAction = "https://www.google.com/accounts/ServiceLogin";
         $this->req->setMethod('POST');
         $this->req->setURL($loginAction);
-        $this->req->addPostData('continue', 'http://www.google.com/analytics/home/?et=reset&amp;hl=en-US');
+        $this->req->addPostData('continue', 'http://www.google.com/analytics/settings/');
         $this->req->addPostData('service', 'analytics');
         $this->req->addPostData('nui', '1');
         $this->req->addPostData('hl', 'en-US');
