@@ -70,7 +70,7 @@ class tantan_GoogleAnalytics {
     function checkIsLoggedIn() { // query the google service to make sure we're logged in
         if (!$this->isLoggedIn()) return false;
         $this->req->setMethod('GET');
-        $this->req->setURL("https://www.google.com/analytics/home/admin");
+        $this->req->setURL("https://www.google.com/analytics/settings/");
         $this->req->sendRequest();
         $response = $this->req->getResponseBody();
         if (eregi('Sign in to your Google Account', $response)) {
@@ -89,8 +89,7 @@ class tantan_GoogleAnalytics {
         /*
             PARSE LOGIN FORM
         */
-
-        $loginForm = "https://www.google.com/accounts/ServiceLogin?service=analytics&passive=true&nui=1&hl=en&continue=https://www.google.com/analytics/settings/&followup=https://www.google.com/analytics/settings/";
+        $loginForm = "https://accounts.google.com/ServiceLogin?service=analytics&amp;passive=true&amp;nui=1&amp;hl=en&amp;continue=https://www.google.com/analytics/settings/&amp;followup=https://www.google.com/analytics/settings/";
         $this->req->setMethod('GET');
         $this->req->setURL($loginForm);
         $this->req->sendRequest();
