@@ -89,7 +89,7 @@ class tantan_GoogleAnalytics {
         /*
             PARSE LOGIN FORM
         */
-        $loginForm = "https://accounts.google.com/ServiceLogin?service=analytics&amp;passive=true&amp;nui=1&amp;hl=en&amp;continue=https://www.google.com/analytics/settings/&amp;followup=https://www.google.com/analytics/settings/";
+        $loginForm = "https://accounts.google.com/ServiceLogin?service=analytics&passive=true&nui=1&hl=en&continue=https://www.google.com/analytics/settings/&followup=https://www.google.com/analytics/settings/";
         $this->req->setMethod('GET');
         $this->req->setURL($loginForm);
         $this->req->sendRequest();
