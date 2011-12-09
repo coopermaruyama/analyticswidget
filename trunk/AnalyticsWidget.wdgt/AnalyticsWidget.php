@@ -139,12 +139,41 @@
 
 	function getSites ( $ga ) {
 		$accounts = $ga->getAccounts();
+		
+		if ( count($accounts) == 0 ) {
+			$error = "Error getting analytics accounts for $username";
+
+			$theErr["err"] = true;
+			$theErr["msg"] = $error;
+
+			$of = new OutputFormat();
+			print_r($of->arrayToJSON($theErr));
+
+			return;
+		}
+		
 		// get all the profiles for all the accounts
 		$i = 0;
 		foreach ( $accounts as $account ) {
-			$profilelist[] = $ga->getSiteProfiles($account["id"]);
+			$prof = $ga->getSiteProfiles($account["id"]);
+			$profilelist[] = $prof;
+			$accounts_enum = $accounts_enum . " ". $account["name"];
+			$i += count($prof);
 		}
+		
+		if ( $i == 0 ) {
+			$error = "There were no profiles found for account(s): $accounts_enum";
 
+			$theErr["err"] = true;
+			$theErr["msg"] = $error;
+
+			$of = new OutputFormat();
+			print_r($of->arrayToJSON($theErr));
+
+			return;
+		}	
+			
+		$i = 0;
 		foreach ( $profilelist as $profiles ) {
 			foreach($profiles as $profile){ 
 				$siteList[$i] = Array("name"=>$profile["name"], "id"=>$profile["id"]);
