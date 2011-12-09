@@ -206,20 +206,16 @@ class tantan_GoogleAnalytics {
         $this->req->sendRequest();
         $body = $this->req->getResponseBody();
         
-        // contrib from rob
-        // This should strip out extraneous parts quickly so preg_match_all will run more quickly
-			$body = substr($body, strpos($body, "account_profile_selector"));
-			$body = substr($body, 0, strpos($body, "</form>"));
-			preg_match_all("/<option.*value=\"(.*)\".*>(.*)<\/option>/isU",$body, $matches);
+		preg_match_all("/<option.*value=\"(.*)\".*>(.*)<\/option>/isU",$body, $matches);
 
-			$profiles = array();
-			foreach ( $matches[1] as $matchNumber => $siteID ) {
-				// I am not sure why this is keyed off the siteID then the siteID is then put in the value as well, this could simply be 
-				// $profiles[$siteID] = $profileName or something. Just seems like an
-				// extra dimension for nothing.
-				$profileName = ( isset($matches[2][$matchNumber]) ) ? $matches[2][$matchNumber] : null;
-				if ( $siteID != 0 && !is_null($profileName) ) $profiles[$siteID] = array("id" => $siteID, "name" => $profileName);
-			}
+		$profiles = array();
+		foreach ( $matches[1] as $matchNumber => $siteID ) {
+			// I am not sure why this is keyed off the siteID then the siteID is then put in the value as well, this could simply be 
+			// $profiles[$siteID] = $profileName or something. Just seems like an
+			// extra dimension for nothing.
+			$profileName = ( isset($matches[2][$matchNumber]) ) ? $matches[2][$matchNumber] : null;
+			if ( $siteID != 0 && !is_null($profileName) ) $profiles[$siteID] = array("id" => $siteID, "name" => $profileName);
+		}
 
         return $profiles;
     }
@@ -229,21 +225,14 @@ class tantan_GoogleAnalytics {
     function getAccounts () {
 		if ( !$this->isLoggedIn() ) return array();
 		
-		$url = "https://www.google.com/analytics/settings/";
+		$url = "https://www.google.com/analytics/web/";
 		$this->req->setMethod('GET');
 		$this->req->setURL($url);
 		$this->req->sendRequest();
 		$body = $this->req->getResponseBody();
-
-		if (!strpos($body, "submitAccountSelectorForm")) {
-		    return array();
-		}
-
-		// This should strip out extraneous parts quickly so preg_match_all will run more quickly
-		$body = substr($body, strpos($body, "submitAccountSelectorForm"));
-		$body = substr($body, 0, strpos($body, "<optgroup"));
-		preg_match_all("/<option.*value=\"(.*)\".*>(.*)<\/option>/isU", $body, $matches);
 		
+		preg_match_all("/\"id\":\"(\d+?)\",\"name\":\"([^\"]+?)\",\"accessLevel\"/", $body, $matches);
+				
 		$accounts = array();
 		foreach ( $matches[1] as $matchNumber => $accountID ) {
 			// I am not sure why this is keyed off the siteID then the siteID is then put in the value as well, this could simply be $profiles[$siteID] = $profileName or something. Just seems like an extra dimension for nothing.
